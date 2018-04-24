@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/testm1507382569303" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1507382569303" name="" targetNamespace="http://www.activiti.org/testm1507382569303" typeLanguage="http://www.w3.org/2001/XMLSchema">
+  <process id="goOut" isClosed="false" isExecutable="true" name="goOut" processType="None">
+    <startEvent activiti:initiator="applyUserId" id="start" name="StartEvent"/>
+    <exclusiveGateway gatewayDirection="Unspecified" id="_3" name="ExclusiveGateway"/>
+    <sequenceFlow id="_4" sourceRef="start" targetRef="_3"/>
+    <userTask activiti:candidateGroups="lifeManager,financeManager,hrManager" activiti:exclusive="true" id="deptOpinion" name="部门领导审批"/>
+    <sequenceFlow id="_9" name="员工" sourceRef="_3" targetRef="deptOpinion"/>
+    <userTask activiti:candidateGroups="generalManager" activiti:exclusive="true" id="generalOpinion" name="总经理审批"/>
+    <sequenceFlow id="_11" name="部门经理" sourceRef="_3" targetRef="generalOpinion"/>
+    <userTask activiti:candidateGroups="boss" activiti:exclusive="true" id="bossOpinion" name="董事长审批"/>
+    <sequenceFlow id="_13" name="总经理" sourceRef="_3" targetRef="bossOpinion"/>
+    <exclusiveGateway gatewayDirection="Unspecified" id="ExclusiveGateway2" name="ExclusiveGateway"/>
+    <sequenceFlow id="_5" sourceRef="deptOpinion" targetRef="ExclusiveGateway2"/>
+    <exclusiveGateway gatewayDirection="Unspecified" id="ExclusiveGateway3" name="ExclusiveGateway"/>
+    <exclusiveGateway gatewayDirection="Unspecified" id="ExclusiveGateway4" name="ExclusiveGateway"/>
+    <sequenceFlow id="_10" sourceRef="generalOpinion" targetRef="ExclusiveGateway3"/>
+    <sequenceFlow id="_12" sourceRef="bossOpinion" targetRef="ExclusiveGateway4"/>
+    <serviceTask activiti:exclusive="true" activiti:type="mail" id="MailTask1" name="邮件通知">
+      <extensionElements>
+        <activiti:field name="to">
+          <activiti:expression>${to}</activiti:expression>
+        </activiti:field>
+        <activiti:field name="from">
+          <activiti:expression>${from}</activiti:expression>
+        </activiti:field>
+        <activiti:field name="subject">
+          <activiti:expression>你好,${name}</activiti:expression>
+        </activiti:field>
+        <activiti:field name="charset">
+          <activiti:expression>UTF-8</activiti:expression>
+        </activiti:field>
+        <activiti:field name="html">
+          <activiti:expression><![CDATA[
+                  <html>
+                     <body>${name} 这是一封来自activiti的邮件</body>
+                  </html>
+            ]]></activiti:expression>
+        </activiti:field>
+        <activiti:executionListener class="com.util.EmailInfo" event="start"/>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="_15" name="不同意" sourceRef="ExclusiveGateway2" targetRef="MailTask1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[!departmentPass]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_6" name="不同意" sourceRef="ExclusiveGateway3" targetRef="MailTask1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[generalPass]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_7" name="不同意" sourceRef="ExclusiveGateway4" targetRef="MailTask1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[!bossPass]]></conditionExpression>
+    </sequenceFlow>
+    <userTask activiti:candidateGroups="hrAssistant" activiti:exclusive="true" id="_8" name="人事助理核查"/>
+    <sequenceFlow id="_14" name="同意" sourceRef="ExclusiveGateway2" targetRef="_8">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[departmentPass]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_16" name="同意" sourceRef="ExclusiveGateway3" targetRef="_8">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[generalPass]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_17" name="同意" sourceRef="ExclusiveGateway4" targetRef="_8">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[bossPass]]></conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway gatewayDirection="Unspecified" id="ExclusiveGateway5" name="ExclusiveGateway"/>
+    <userTask activiti:candidateGroups="hrManager" activiti:exclusive="true" id="hrOpinion" name="人事经理审批"/>
+    <sequenceFlow id="_20" sourceRef="_8" targetRef="ExclusiveGateway5"/>
+    <sequenceFlow id="_21" name="同意" sourceRef="ExclusiveGateway5" targetRef="hrOpinion">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[hrAssistantPass]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_18" name="不同意" sourceRef="ExclusiveGateway5" targetRef="MailTask1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[!hrAssistantPass]]></conditionExpression>
+    </sequenceFlow>
+    <exclusiveGateway gatewayDirection="Unspecified" id="_19" name="ExclusiveGateway"/>
+    <sequenceFlow id="_22" sourceRef="hrOpinion" targetRef="_19"/>
+    <serviceTask activiti:exclusive="true" activiti:type="mail" id="MailTask2" name="邮件通知">
+      <extensionElements>
+        <activiti:field name="to">
+          <activiti:expression>${to}</activiti:expression>
+        </activiti:field>
+        <activiti:field name="from">
+          <activiti:expression>${from}</activiti:expression>
+        </activiti:field>
+        <activiti:field name="subject">
+          <activiti:expression>你好,${name}</activiti:expression>
+        </activiti:field>
+        <activiti:field name="charset">
+          <activiti:expression>UTF-8</activiti:expression>
+        </activiti:field>
+        <activiti:field name="html">
+          <activiti:expression><![CDATA[
+                  <html>
+                     <body>${name} 这是一封来自activiti的邮件</body>
+                  </html>
+            ]]></activiti:expression>
+        </activiti:field>
+        <activiti:executionListener class="com.util.EmailInfo" event="start"/>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="_24" name="同意" sourceRef="_19" targetRef="MailTask2">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[hrManagerOpinion]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_25" name="不同意" sourceRef="_19" targetRef="MailTask1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[!hrManagerPass]]></conditionExpression>
+    </sequenceFlow>
+    <userTask activiti:candidateGroups="doorkeeper" activiti:exclusive="true" id="doorkeeper" name="保安"/>
+    <sequenceFlow id="_27" sourceRef="MailTask2" targetRef="doorkeeper"/>
+    <endEvent id="_28" name="EndEvent"/>
+    <sequenceFlow id="_29" sourceRef="doorkeeper" targetRef="_28"/>
+    <userTask activiti:assignee="${applyUserId}" activiti:exclusive="true" id="adjust" name="调整申请">
+      <extensionElements>
+        <activiti:taskListener delegateExpression="${afterModifyApplyContentProcessor}" event="complete"/>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="_32" sourceRef="MailTask1" targetRef="adjust"/>
+    <exclusiveGateway gatewayDirection="Unspecified" id="ExclusiveGateway7" name="ExclusiveGateway"/>
+    <sequenceFlow id="_2" sourceRef="adjust" targetRef="ExclusiveGateway7"/>
+    <sequenceFlow id="_23" name="重新申请" sourceRef="ExclusiveGateway7" targetRef="_3">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[againApply]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_26" name="取消申请" sourceRef="ExclusiveGateway7" targetRef="_28">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[cancleApply]]></conditionExpression>
+    </sequenceFlow>
+    <userTask activiti:candidateGroups="generalManager" activiti:exclusive="true" id="_30" name="分部总经理审批"/>
+    <sequenceFlow id="_31" name="部门经理" sourceRef="_3" targetRef="_30"/>
+    <sequenceFlow id="_33" sourceRef="_30" targetRef="ExclusiveGateway3"/>
+  </process>
+  <bpmndi:BPMNDiagram documentation="background=#3C3F41;count=1;horizontalcount=1;orientation=0;width=842.4;height=1195.2;imageableWidth=832.4;imageableHeight=1185.2;imageableX=5.0;imageableY=5.0" id="Diagram-_1" name="New Diagram">
+    <bpmndi:BPMNPlane bpmnElement="goOut">
+      <bpmndi:BPMNShape bpmnElement="start" id="Shape-start">
+        <dc:Bounds height="32.0" width="32.0" x="-15.0" y="250.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_3" id="Shape-_3" isMarkerVisible="false">
+        <dc:Bounds height="32.0" width="32.0" x="85.0" y="250.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="deptOpinion" id="Shape-deptOpinion">
+        <dc:Bounds height="55.0" width="85.0" x="190.0" y="100.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="bossOpinion" id="Shape-bossOpinion">
+        <dc:Bounds height="55.0" width="85.0" x="195.0" y="370.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ExclusiveGateway2" id="Shape-ExclusiveGateway2" isMarkerVisible="false">
+        <dc:Bounds height="32.0" width="32.0" x="370.0" y="185.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ExclusiveGateway3" id="Shape-ExclusiveGateway3" isMarkerVisible="false">
+        <dc:Bounds height="32.0" width="32.0" x="420.0" y="250.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ExclusiveGateway4" id="Shape-ExclusiveGateway4" isMarkerVisible="false">
+        <dc:Bounds height="32.0" width="32.0" x="460.0" y="380.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="MailTask1" id="Shape-MailTask1">
+        <dc:Bounds height="55.0" width="85.0" x="390.0" y="60.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_8" id="Shape-_8">
+        <dc:Bounds height="55.0" width="85.0" x="560.0" y="200.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ExclusiveGateway5" id="Shape-ExclusiveGateway5" isMarkerVisible="false">
+        <dc:Bounds height="32.0" width="32.0" x="730.0" y="210.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="hrOpinion" id="Shape-hrOpinion">
+        <dc:Bounds height="55.0" width="85.0" x="835.0" y="200.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_19" id="Shape-_19" isMarkerVisible="false">
+        <dc:Bounds height="32.0" width="32.0" x="1010.0" y="210.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="MailTask2" id="Shape-MailTask2">
+        <dc:Bounds height="55.0" width="85.0" x="1145.0" y="200.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="doorkeeper" id="Shape-doorkeeper">
+        <dc:Bounds height="55.0" width="85.0" x="1315.0" y="200.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_28" id="Shape-_28">
+        <dc:Bounds height="32.0" width="32.0" x="1370.0" y="85.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="adjust" id="Shape-adjust">
+        <dc:Bounds height="55.0" width="85.0" x="380.0" y="-10.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ExclusiveGateway7" id="Shape-ExclusiveGateway7" isMarkerVisible="false">
+        <dc:Bounds height="32.0" width="32.0" x="590.0" y="5.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="32.0" width="32.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_30" id="Shape-_30">
+        <dc:Bounds height="55.0" width="85.0" x="200.0" y="240.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_13" id="BPMNEdge__13" sourceElement="_3" targetElement="bossOpinion">
+        <di:waypoint x="100.0" y="281.0"/>
+        <di:waypoint x="100.0" y="345.0"/>
+        <di:waypoint x="195.0" y="397.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_12" id="BPMNEdge__12" sourceElement="bossOpinion" targetElement="ExclusiveGateway4">
+        <di:waypoint x="280.0" y="397.5"/>
+        <di:waypoint x="460.0" y="396.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_15" id="BPMNEdge__15" sourceElement="ExclusiveGateway2" targetElement="MailTask1">
+        <di:waypoint x="396.0" y="195.0"/>
+        <di:waypoint x="396.0" y="115.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_14" id="BPMNEdge__14" sourceElement="ExclusiveGateway2" targetElement="_8">
+        <di:waypoint x="402.0" y="201.0"/>
+        <di:waypoint x="560.0" y="227.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_17" id="BPMNEdge__17" sourceElement="ExclusiveGateway4" targetElement="_8">
+        <di:waypoint x="492.0" y="396.0"/>
+        <di:waypoint x="560.0" y="227.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_16" id="BPMNEdge__16" sourceElement="ExclusiveGateway3" targetElement="_8">
+        <di:waypoint x="452.0" y="266.0"/>
+        <di:waypoint x="560.0" y="227.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_18" id="BPMNEdge__18" sourceElement="ExclusiveGateway5" targetElement="MailTask1">
+        <di:waypoint x="745.0" y="211.0"/>
+        <di:waypoint x="745.0" y="120.0"/>
+        <di:waypoint x="475.0" y="87.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_20" id="BPMNEdge__20" sourceElement="_8" targetElement="ExclusiveGateway5">
+        <di:waypoint x="645.0" y="227.5"/>
+        <di:waypoint x="730.0" y="226.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_22" id="BPMNEdge__22" sourceElement="hrOpinion" targetElement="_19">
+        <di:waypoint x="920.0" y="227.5"/>
+        <di:waypoint x="1010.0" y="226.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_21" id="BPMNEdge__21" sourceElement="ExclusiveGateway5" targetElement="hrOpinion">
+        <di:waypoint x="762.0" y="226.0"/>
+        <di:waypoint x="835.0" y="227.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_24" id="BPMNEdge__24" sourceElement="_19" targetElement="MailTask2">
+        <di:waypoint x="1042.0" y="226.0"/>
+        <di:waypoint x="1145.0" y="227.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_23" id="BPMNEdge__23" sourceElement="ExclusiveGateway7" targetElement="_3">
+        <di:waypoint x="606.0" y="5.0"/>
+        <di:waypoint x="95.0" y="-15.0"/>
+        <di:waypoint x="95.0" y="256.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_26" id="BPMNEdge__26" sourceElement="ExclusiveGateway7" targetElement="_28">
+        <di:waypoint x="618.0" y="25.0"/>
+        <di:waypoint x="1385.0" y="25.0"/>
+        <di:waypoint x="1385.0" y="85.03128057732869"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_25" id="BPMNEdge__25" sourceElement="_19" targetElement="MailTask1">
+        <di:waypoint x="1030.0" y="214.0"/>
+        <di:waypoint x="1030.0" y="123.0"/>
+        <di:waypoint x="475.0" y="87.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_27" id="BPMNEdge__27" sourceElement="MailTask2" targetElement="doorkeeper">
+        <di:waypoint x="1230.0" y="227.5"/>
+        <di:waypoint x="1315.0" y="227.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_29" id="BPMNEdge__29" sourceElement="doorkeeper" targetElement="_28">
+        <di:waypoint x="1385.0" y="200.0"/>
+        <di:waypoint x="1385.0" y="116.96871942267131"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_2" id="BPMNEdge__2" sourceElement="adjust" targetElement="ExclusiveGateway7">
+        <di:waypoint x="465.0" y="17.5"/>
+        <di:waypoint x="590.0" y="21.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_4" id="BPMNEdge__4" sourceElement="start" targetElement="_3">
+        <di:waypoint x="17.0" y="266.0"/>
+        <di:waypoint x="85.0" y="266.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_5" id="BPMNEdge__5" sourceElement="deptOpinion" targetElement="ExclusiveGateway2">
+        <di:waypoint x="275.0" y="127.5"/>
+        <di:waypoint x="370.0" y="201.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_6" id="BPMNEdge__6" sourceElement="ExclusiveGateway3" targetElement="MailTask1">
+        <di:waypoint x="436.0" y="250.0"/>
+        <di:waypoint x="436.0" y="115.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_7" id="BPMNEdge__7" sourceElement="ExclusiveGateway4" targetElement="MailTask1">
+        <di:waypoint x="467.5" y="388.5"/>
+        <di:waypoint x="467.5" y="115.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_9" id="BPMNEdge__9" sourceElement="_3" targetElement="deptOpinion">
+        <di:waypoint x="100.0" y="251.0"/>
+        <di:waypoint x="100.0" y="170.0"/>
+        <di:waypoint x="190.0" y="127.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_31" id="BPMNEdge__31" sourceElement="_3" targetElement="_30">
+        <di:waypoint x="117.0" y="266.0"/>
+        <di:waypoint x="200.0" y="267.5"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_33" id="BPMNEdge__33" sourceElement="_30" targetElement="ExclusiveGateway3">
+        <di:waypoint x="285.0" y="267.5"/>
+        <di:waypoint x="420.0" y="266.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_32" id="BPMNEdge__32" sourceElement="MailTask1" targetElement="adjust">
+        <di:waypoint x="427.5" y="60.0"/>
+        <di:waypoint x="427.5" y="45.0"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

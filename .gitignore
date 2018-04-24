@@ -1,0 +1,40 @@
+# 配置不进行 git 提交的文件
+
+# class file
+*.class
+
+# package file
+*.war
+*.ear
+
+#kdiff3 file
+*.orig
+
+#maven file
+target/
+
+#eclipse file
+.settings/
+.project
+.classpath
+
+#svn file
+.svn/
+
+#idea file
+.idea/
+/idea/
+*.iml
+*.ipr
+*.iws
+
+#temp file
+*.log
+*.diff
+*.cache
+*.patch
+*.tmp
+
+#system file
+.DS_Store
+Thumbs.db

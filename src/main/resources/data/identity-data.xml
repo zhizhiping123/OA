@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<!-- 定义角色 -->
+	<ACT_ID_GROUP ID_="admin" NAME_="管理员" />
+	
+	<ACT_ID_GROUP ID_="generalManager" NAME_="总经理" />
+	<ACT_ID_GROUP ID_="secretary" NAME_="总经理秘书" />
+
+	<ACT_ID_GROUP ID_="hrManager" NAME_="人事经理" />
+	<ACT_ID_GROUP ID_="hrAssistantClerk" NAME_="人事助理文员" />
+	<ACT_ID_GROUP ID_="hr" NAME_="人事文员" />
+	
+	<ACT_ID_GROUP ID_="adminAssistantClerk" NAME_="人事行政助理文员" />
+	
+	<ACT_ID_GROUP ID_="marketingManager" NAME_="市场经理" />
+	<ACT_ID_GROUP ID_="marketingClerk" NAME_="市场文员" />
+	
+	<ACT_ID_GROUP ID_="financeManager" NAME_="财务经理" />
+ 	<ACT_ID_GROUP ID_="financeClerk" NAME_="财务文员" />
+
+	<!-- 管理员 -->
+	<ACT_ID_USER ID_="henry" PWD_="000000" EMAIL_="admin@localhost" FIRST_="Henry" LAST_="Yan"/>
+	<ACT_ID_MEMBERSHIP USER_ID_="henry" GROUP_ID_="admin" />
+	
+	<!-- 总经理 -->
+	<ACT_ID_USER ID_="bill" EMAIL_="bill@localhost" FIRST_="Bill" LAST_="Zheng" PWD_="000000" />
+	<ACT_ID_MEMBERSHIP USER_ID_="bill" GROUP_ID_="generalManager" />
+	
+	<!-- 总经理 秘书-->
+	<ACT_ID_USER ID_="jenny" EMAIL_="jenny@localhost" FIRST_="Jenny" LAST_="Wang" PWD_="000000" />
+	<ACT_ID_MEMBERSHIP USER_ID_="jenny" GROUP_ID_="secretary" />
+	
+	<!-- 人事经理 -->
+	<ACT_ID_USER ID_="shiny" EMAIL_="shiny@localhost" FIRST_="Shiny" LAST_="Xiao" PWD_="000000" />
+	<ACT_ID_MEMBERSHIP USER_ID_="shiny" GROUP_ID_="hrManager" />
+	<!-- 人事助理文员 -->
+	<ACT_ID_USER ID_="cherry" EMAIL_="cherry@localhost" FIRST_="Cherry" LAST_="Yang" PWD_="000000" />
+	<ACT_ID_MEMBERSHIP USER_ID_="cherry" GROUP_ID_="hrAssistantClerk" />
+	<!-- 行政助理文员(人事) -->
+	<ACT_ID_USER ID_="cathy" EMAIL_="cathy@localhost" FIRST_="Cathy" LAST_="Lin" PWD_="000000" />
+	<ACT_ID_MEMBERSHIP USER_ID_="cathy" GROUP_ID_="adminAssistantClerk" />
+	
+	<!-- 市场部 -->
+	<!-- 市场部 经理 -->
+	<ACT_ID_USER ID_="kermit" EMAIL_="kermit@localhost" FIRST_="Kermit" LAST_="Miao" PWD_="000000" />
+	<ACT_ID_MEMBERSHIP USER_ID_="kermit" GROUP_ID_="marketingManager" />
+	<!-- 市场部 文员 -->
+	<ACT_ID_USER ID_="eric" EMAIL_="eric@localhost" FIRST_="Eric" LAST_="Li" PWD_="000000" />
+	<ACT_ID_MEMBERSHIP USER_ID_="eric" GROUP_ID_="marketingClerk" />
+	
+	<ACT_ID_USER ID_="tom" EMAIL_="tom@localhost" FIRST_="Tom" LAST_="Wang" PWD_="000000" />
+	
+	<!-- 财务部 -->
+	<!-- 财务部 经理 -->
+	<ACT_ID_USER ID_="andy" EMAIL_="andy@localhost" FIRST_="Andy" LAST_="Zhao" PWD_="000000" />
+	<ACT_ID_MEMBERSHIP USER_ID_="andy" GROUP_ID_="financeManager" />
+	<!-- 财务部 文员 -->
+
+	<ACT_ID_USER ID_="amy" EMAIL_="amy@localhost" FIRST_="Amy" LAST_="Zhang" PWD_="000000" />
+	<ACT_ID_MEMBERSHIP USER_ID_="amy" GROUP_ID_="financeClerk" />
+	
+	<ACT_ID_USER ID_="ken" EMAIL_="ken@localhost" FIRST_="Ken" LAST_="Li" PWD_="000000" />
+	<ACT_ID_MEMBERSHIP USER_ID_="ken" GROUP_ID_="hr" />
+</dataset>
